@@ -7,15 +7,18 @@ public class Player : MonoBehaviour
     [SerializeField]
     private GameObject Pivot;
     private bool isMove = false;
+    private Rigidbody playerRigid;
+    public bool isJumping = false;
 
     private void Start()
     {
         Pivot = GameObject.FindWithTag("Pivot");
+        playerRigid = GetComponent<Rigidbody>();
     }
 
     private void Update()
     {
-        
+        PlayerJump();
     }
 
     private void FixedUpdate()
@@ -58,6 +61,26 @@ public class Player : MonoBehaviour
             transform.forward = move; // 플레이어의 시선 방향이 방향키 입력 방향과 일치하도록 회전
             transform.position += move * Time.deltaTime * Speed; // 키보드 입력 시 camSpot의 전방 또는 좌우으로 이동
             isMove = false; // 시선 방향 고정
+        }
+    }
+    private void PlayerJump()
+    {
+        float jumpPower = 2f;
+
+        if (Input.GetKeyDown(KeyCode.Space) == true)
+        {
+            if (isJumping == false)
+            {
+                playerRigid.AddForce(Vector3.up * jumpPower, ForceMode.Impulse);
+                isJumping = true;
+            }
+        }
+    }
+    private void OnCollisionEnter(Collision collision)
+    {
+        if (collision.gameObject.CompareTag("Map"))
+        {
+            isJumping = false;
         }
     }
 }
